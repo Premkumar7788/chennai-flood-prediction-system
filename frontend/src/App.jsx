@@ -1,25 +1,25 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppShell from './components/layout/AppShell';
+import DashboardPage from './pages/DashboardPage';
+import MapPage from './pages/MapPage';
+import PredictPage from './pages/PredictPage';
+import HistoryPage from './pages/HistoryPage';
+import AboutPage from './pages/AboutPage';
 
-/**
- * Chennai Flood Prediction System - Root Application Component
- * Scaffold placeholder containing basic layout structure.
- */
-function App() {
+export default function App() {
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>🌊 Chennai Flood Prediction System</h1>
-        <p className="app-subtitle">Real-time street-level flood prediction and monitoring system for Chennai, India</p>
-      </header>
-
-      <main className="app-content">
-        {/* Placeholder: Interactive Map, Sidebar, and Analytics Dashboard components will go here */}
-        <div className="scaffold-placeholder">
-          <p>Application scaffold ready. Map and controls coming soon.</p>
-        </div>
-      </main>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="map" element={<MapPage />} />
+          <Route path="predict" element={<PredictPage />} />
+          <Route path="history" element={<HistoryPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
