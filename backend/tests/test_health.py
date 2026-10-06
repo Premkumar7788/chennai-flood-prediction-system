@@ -19,4 +19,4 @@ def test_health_check():
     """Test /health endpoint returns 200 and ok status."""
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "fail"}
+    assert response.json() == {"status": "ok"}
