@@ -20,6 +20,7 @@ The project includes an automated Continuous Integration pipeline implemented wi
 - **Isolated Environment Build**: Prepares Python dependencies in an isolated virtual environment.
 - **Automated Unit & Regression Testing**: Executes 13 `pytest` test suites verifying flood threshold boundaries, feature mappings, and health checks.
 - **Docker Container Packaging**: Automatically builds and tags Docker images (`chennai-flood-backend:build-<BUILD_NUMBER>` and `latest`).
+- **Automated Push Trigger Verification**: Live CI push test verified via GitHub Webhook / Poll SCM trigger (`test(ci): trigger automated build demonstration`).
 
 ---
 

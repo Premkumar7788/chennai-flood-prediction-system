@@ -14,6 +14,8 @@ echo "=========================================="
 echo "--> [Stage 1/3] Setting up Python 3.11 Virtual Environment..."
 if command -v python3.11 >/dev/null 2>&1; then
     PYTHON_BIN="python3.11"
+elif [ -f "/Users/premkumar/miniforge3/bin/python" ]; then
+    PYTHON_BIN="/Users/premkumar/miniforge3/bin/python"
 else
     PYTHON_BIN="python3"
 fi
