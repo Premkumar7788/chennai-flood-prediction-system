@@ -37,14 +37,14 @@ The project was developed in Sprints 1–7 and containerized with Docker.
 | Item | Details |
 | :--- | :--- |
 | **Project Name** | Chennai Street-Level Flood Prediction System |
-| **GitHub Repository** | `https://github.com/HemapriyadharshniG/chennai-flood-prediction-latest` |
+| **GitHub Repository** | `https://github.com/Premkumar7788/chennai-flood-prediction-system` |
 | **Main Branch** | `main` |
 | **Technology / Framework** | **Backend**: Python 3.11, FastAPI, LightGBM (Embedded ML), GeoAlchemy2, SQLAlchemy<br>**Frontend**: React 18, Vite, Leaflet.js, Tailwind CSS<br>**Database**: PostgreSQL 15 with PostGIS 3.3 |
 | **Application Port** | Frontend: `3000` \| Backend API: `8000` \| PostgreSQL: `5432` |
 | **Docker Image Name** | `chennai-flood-backend:latest` & `chennai-flood-backend:build-<BUILD_NUMBER>` |
 | **Dockerfile Location** | `backend/Dockerfile` and `frontend/Dockerfile` |
 | **Docker Compose File** | `docker-compose.yml` (in root directory) |
-| **Current Deployment Environment** | macOS / AWS EC2 Ubuntu 22.04 LTS (Docker Container Runtime) |
+| **Current Deployment Environment** | AWS EC2 Ubuntu 22.04 LTS (Public IP: `13.53.206.75`)<br>• Backend Live: `http://13.53.206.75:8000`<br>• Frontend Live: `http://13.53.206.75:3000`<br>• Health Check: `http://13.53.206.75:8000/health` (Status: OK) |
 
 ### Transition from Sprints 1–7 to Sprint 8:
 Previously, code moved from developer workstation to GitHub, and deployment required an engineer to manually connect via SSH, run `git pull`, execute `docker build` manually, and restart containers without automated regression testing. Sprint 8 introduces Jenkins to automate this entire lifecycle.
