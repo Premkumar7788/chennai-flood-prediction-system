@@ -13,7 +13,7 @@ from app.api.router import router as api_router
 app = FastAPI(
     title="Chennai Flood Prediction API",
     description="Backend API for real-time and predictive flood risk monitoring in Chennai.",
-    version="1.0.0",
+    version="1.1.0",
 )
 
 # Configure CORS middleware (allowing all origins for development)
@@ -32,7 +32,8 @@ async def root():
     return {
         "message": "Welcome to the Chennai Flood Prediction API",
         "status": "online",
-        "version": "1.0.0",
+        "version": "1.1.0",
+        "deployment": "Sprint 09 Automated CI/CD",
     }
 
 

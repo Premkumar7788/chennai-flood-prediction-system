@@ -7,12 +7,12 @@ client = TestClient(app)
 
 
 def test_root_endpoint():
-    """Test root endpoint returns welcome payload."""
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "online"
-    assert "version" in data
+    assert data["version"] == "1.1.0"
+    assert "deployment" in data
 
 
 def test_health_check():
