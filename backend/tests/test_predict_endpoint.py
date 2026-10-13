@@ -1,6 +1,6 @@
 """Tests for POST /api/predict: risk-band threshold boundaries, feature-vector
-ordering against model_metadata.json, and behavior when no trained model is
-loaded.
+ordering against model_metadata.json, behavior when no trained model is
+loaded, and input/database error handling.
 
 Both the model and the DB session are mocked -- these tests don't need a
 real .pkl on disk or a live Postgres/PostGIS instance.
@@ -210,3 +210,38 @@ def test_predict_endpoint_falls_back_to_heuristic_when_model_missing(monkeypatch
     body = response.json()
     assert body["model_type"] == "heuristic_fallback"
     assert len(fake_db.added) == 1
+
+
+def test_predict_endpoint_zone_not_found():
+    """Verify POST /api/predict returns 404 when requested zone_id does not exist."""
+    fake_db = _FakeDB(None)
+
+    def _override_get_db():
+        yield fake_db
+
+    app.dependency_overrides[get_db] = _override_get_db
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/predict",
+        json={
+            "zone_id": 9999,
+            "rainfall_1h_cm": 2.0,
+            "rainfall_24h_cm": 10.0,
+            "rainfall_7d_cm": 15.0,
+            "humidity_pct": 75.0,
+        },
+    )
+    app.dependency_overrides.pop(get_db, None)
+
+    assert response.status_code == 404
+    assert "not found" in response.json()["detail"].lower()
+
+
+def test_predict_endpoint_validation_error(client_with_fake_db):
+    """Verify POST /api/predict returns 422 when request body fails schema validation."""
+    client, _ = client_with_fake_db
+
+    # Missing mandatory rainfall parameters and non-integer zone_id
+    response = client.post("/api/predict", json={"zone_id": "not-an-integer"})
+    assert response.status_code == 422
