@@ -320,6 +320,56 @@ latest: digest: sha256:d84f9a3e1b7c8912ef6530189bfa88701928374659281748291039485
 ## 8. Automated Remote Deployment to AWS EC2
 In Stage 6, Jenkins connects via secure OpenSSH to the AWS EC2 instance (`16.192.243.169`) using the provisioned SSH private key (`~/.ssh/flood-ec2`) on port `22`.
 
+### AWS EC2 Infrastructure Setup & Target Environment Provisioning
+Prior to automated deployment orchestration from Jenkins, the AWS EC2 target environment (`16.192.243.169`) was prepared and hardened:
+
+1. **AWS EC2 Security Group Configuration (`sg-01121a3b0b733af3a`)**:
+   Configured inbound traffic rules to open:
+   - Port `22` & Port `443`: Secure SSH access for Jenkins automated deployment and administration.
+   - Port `8000`: FastAPI Backend REST API service.
+   - Port `3000`: React frontend user dashboard.
+   
+   ![AWS Security Group Inbound Rules](screenshots_sprint09/ec2_01_aws_security_group.jpeg)
+
+2. **EC2 Swap Memory Management (1024 MiB)**:
+   To ensure the AWS EC2 instance remained resilient during container building and image layer decompression without triggering Linux Kernel Out-Of-Memory (OOM) killer terminations, a 1 GiB swapfile was provisioned:
+   ```bash
+   sudo dd if=/dev/zero of=/swapfile bs=1M count=1024
+   sudo chmod 600 /swapfile
+   sudo mkswap /swapfile
+   sudo swapon /swapfile
+   ```
+   
+   ![EC2 Swap Space Configuration](screenshots_sprint09/ec2_02_swap_configuration.jpeg)
+
+3. **Docker Compose CLI Plugin Installation**:
+   Installed the modern Docker Compose CLI v2 binary directly to `/usr/local/lib/docker/cli-plugins/docker-compose`:
+   
+   ![Docker Compose CLI Plugin Installation](screenshots_sprint09/ec2_06_docker_compose_cli_plugin.jpeg)
+
+4. **Dynamic Image Tag Injection via `docker-compose.override.yml`**:
+   To decouple service orchestration from hardcoded container tags, a `docker-compose.override.yml` file was created on the EC2 host:
+   ```yaml
+   services:
+     backend:
+       image: premkumar2005/chennai-flood-backend:${IMAGE_TAG:-latest}
+   ```
+   This was tested and verified using `IMAGE_TAG=test docker compose config | grep chennai-flood-backend`:
+   
+   ![Docker Compose Override Setup](screenshots_sprint09/ec2_03_compose_override_setup.jpeg)
+   ![Docker Compose Configuration & SSH Key Authorization](screenshots_sprint09/ec2_04_compose_config_and_ssh_auth.jpeg)
+
+5. **Jenkins SSH Key Authorization on EC2**:
+   Appended Hema's SSH public key (`~/.ssh/flood-ec2.pub`) into `~/.ssh/authorized_keys` on EC2, granting Jenkins automated passwordless SSH execution capability.
+
+6. **Frontend Container Build & Deployment**:
+   Built and deployed the React frontend container connected to the live backend:
+   ```bash
+   docker compose up -d --no-deps --build frontend
+   ```
+   
+   ![Frontend Container Build & Deployment](screenshots_sprint09/ec2_05_frontend_container_build.jpeg)
+
 ### Zero-Downtime Deployment Workflow
 1. Jenkins SSHs into `ec2-user@16.192.243.169`.
 2. Navigates to project directory: `cd ~/chennai-flood-prediction-system`.
