@@ -31,9 +31,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - app_logs:/var/log/chennai-flood
     environment:
       DATABASE_URL: postgresql://floodadmin:floodpass@postgres:5432/chennai_flood
       CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173
+      LOG_DIR: /var/log/chennai-flood
     networks:
       - flood-network
 
@@ -52,6 +55,8 @@ services:
 
 volumes:
   pgdata:
+    driver: local
+  app_logs:
     driver: local
 
 networks:
